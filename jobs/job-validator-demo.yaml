@@ -1,9 +1,9 @@
 - defaultTab: nodes
   description: ''
   executionEnabled: true
-  id: 544cdb5c-2f54-4dcd-bd9a-d7369b91b546
+  id: 54036800-a342-499a-874f-3abdced5be0c
   loglevel: INFO
-  name: bruno-new-job-thread-count
+  name: job-validator-demo
   nodeFilterEditable: false
   nodefilters:
     dispatch:
@@ -11,7 +11,7 @@
       keepgoing: false
       rankOrder: ascending
       successOnEmptyNodeFilter: false
-      threadcount: '5'
+      threadcount: '2'
     filter: .*
   nodesSelectedByDefault: true
   plugins:
@@ -24,5 +24,5 @@
     keepgoing: false
     strategy: node-first
   user: bruno
-  uuid: 544cdb5c-2f54-4dcd-bd9a-d7369b91b546
+  uuid: 54036800-a342-499a-874f-3abdced5be0c
 
