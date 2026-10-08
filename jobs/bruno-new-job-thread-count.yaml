@@ -11,7 +11,7 @@
       keepgoing: false
       rankOrder: ascending
       successOnEmptyNodeFilter: false
-      threadcount: '1000'
+      threadcount: '4'
     filter: .*
   nodesSelectedByDefault: true
   plugins:
