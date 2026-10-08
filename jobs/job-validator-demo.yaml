@@ -1,0 +1,28 @@
+- defaultTab: nodes
+  description: ''
+  executionEnabled: true
+  id: 54036800-a342-499a-874f-3abdced5be0c
+  loglevel: INFO
+  name: job-validator-demo
+  nodeFilterEditable: false
+  nodefilters:
+    dispatch:
+      excludePrecedence: true
+      keepgoing: false
+      rankOrder: ascending
+      successOnEmptyNodeFilter: false
+      threadcount: '1000'
+    filter: .*
+  nodesSelectedByDefault: true
+  plugins:
+    ExecutionLifecycle: {}
+  scheduleEnabled: true
+  schedules: []
+  sequence:
+    commands:
+    - exec: echo "Hello World"
+    keepgoing: false
+    strategy: node-first
+  user: bruno
+  uuid: 54036800-a342-499a-874f-3abdced5be0c
+
