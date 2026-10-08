@@ -2,7 +2,7 @@
 # Only the platform team can change the rules, the validator or the pipeline.
 # Without this, a user could raise the cap or add an exception in the same MR as their job.
 
-/policy/            @platform-team
-/scripts/           @platform-team
-/.gitlab-ci.yml     @platform-team
-/CODEOWNERS         @platform-team
+/policy/            @brmdias
+/scripts/           @brmdias
+/.gitlab-ci.yml     @brmdias
+/CODEOWNERS         @brmdias
