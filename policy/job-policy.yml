@@ -35,3 +35,4 @@ exceptions:
     reason: "Temporary migration job"
     approved_by: "platform-team"
     expires: "2026-06-30"   # intentionally expired - used by the demo test suite
+# New comment for testing purposes
