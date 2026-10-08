@@ -1,0 +1,28 @@
+- defaultTab: nodes
+  description: ''
+  executionEnabled: true
+  id: 544cdb5c-2f54-4dcd-bd9a-d7369b91b546
+  loglevel: INFO
+  name: bruno-new-job-thread-count
+  nodeFilterEditable: false
+  nodefilters:
+    dispatch:
+      excludePrecedence: true
+      keepgoing: false
+      rankOrder: ascending
+      successOnEmptyNodeFilter: false
+      threadcount: '1000'
+    filter: .*
+  nodesSelectedByDefault: true
+  plugins:
+    ExecutionLifecycle: {}
+  scheduleEnabled: true
+  schedules: []
+  sequence:
+    commands:
+    - exec: echo "Hello World"
+    keepgoing: false
+    strategy: node-first
+  user: bruno
+  uuid: 544cdb5c-2f54-4dcd-bd9a-d7369b91b546
+
