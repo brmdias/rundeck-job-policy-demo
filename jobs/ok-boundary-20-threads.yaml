@@ -1,0 +1,20 @@
+- defaultTab: nodes
+  description: Compliant job - exactly at the cap (20 threads), mirrors the 2000-node/20-thread pattern
+  executionEnabled: true
+  group: demo/validation
+  id: 0f6a3e1c-2222-4a22-8a22-000000000002
+  loglevel: INFO
+  name: ok-boundary-20-threads
+  nodeFilterEditable: false
+  nodefilters:
+    dispatch:
+      keepgoing: true
+      threadcount: 20
+    filter: 'tags: all'
+  nodesSelectedByDefault: true
+  sequence:
+    commands:
+    - exec: uptime
+    keepgoing: false
+    strategy: node-first
+  uuid: 0f6a3e1c-2222-4a22-8a22-000000000002

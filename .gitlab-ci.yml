@@ -1,0 +1,53 @@
+# GitLab CI - job definition policy gate.
+#
+# 1. validate-jobs  : runs on every merge request; blocks the merge when a changed job
+#                     definition violates policy/job-policy.yml.
+# 2. audit-all-jobs : scheduled (e.g. weekly); scans EVERY job, publishes a CSV/JSON report
+#                     of legacy non-compliant jobs. Never blocks - it feeds remediation.
+#
+# To make the gate binding, in GitLab set (Settings > Merge requests):
+#   - "Pipelines must succeed"
+#   - protected target branches (main / promote-*) with merge only via MR
+#   - CODEOWNERS approval for policy/ and .gitlab-ci.yml (see CODEOWNERS)
+
+stages:
+  - validate
+
+default:
+  image: python:3.11-slim
+  before_script:
+    - pip install --quiet pyyaml
+
+validate-jobs:
+  stage: validate
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  variables:
+    GIT_DEPTH: "0"          # full history so the diff against the target branch works
+  script:
+    - git fetch origin "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" --quiet
+    - >
+      python3 scripts/validate_jobs.py
+      --changed-since "origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
+      --format junit --output reports/job-policy-junit.xml
+  artifacts:
+    when: always
+    reports:
+      junit: reports/job-policy-junit.xml
+    paths:
+      - reports/
+    expire_in: 30 days
+
+audit-all-jobs:
+  stage: validate
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+  allow_failure: true       # reporting only; do not block the schedule
+  script:
+    - python3 scripts/validate_jobs.py --all --format csv  --output reports/job-audit.csv  || true
+    - python3 scripts/validate_jobs.py --all --format json --output reports/job-audit.json || true
+  artifacts:
+    when: always
+    paths:
+      - reports/
+    expire_in: 90 days

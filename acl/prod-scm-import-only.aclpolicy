@@ -1,0 +1,47 @@
+# Prod project: jobs may only change via the SCM import plugin (i.e. from the validated GitLab branch).
+# Users can read and run jobs, but have no create/update/delete in the UI or API.
+# Uses the 'scm_create' / 'scm_update' / 'scm_delete' job actions from the Rundeck ACL reference.
+# Rundeck ACLs are allow-lists: simply NOT granting create/update/delete is what blocks edits.
+#
+# VALIDATE IN A SANDBOX BEFORE ROLLOUT (see README "Prod hardening"):
+#   1) SCM import still works for members of 'scm-importers',
+#   2) UI/API job edits (create/update/delete/import) are rejected for 'app-users',
+#   3) no other policy file grants 'update'/'create'/'delete' on jobs (e.g. a broad admin group)
+#      to people who should not bypass the Git gate.
+# Replace group names and project name to match your environment.
+
+description: Prod - everyday users can read and run jobs, not edit them
+context:
+  project: 'prod-project'
+for:
+  resource:
+    - equals:
+        kind: job
+      allow: []          # no 'create' / 'delete' / 'scm_*'
+  job:
+    - match:
+        name: '.*'
+      allow: [read, run, view_history, killjob]
+by:
+  group: app-users
+
+---
+
+description: Prod - SCM importers apply jobs from Git only (no UI/API edit rights)
+context:
+  project: 'prod-project'
+for:
+  resource:
+    - equals:
+        kind: job
+      allow: [scm_create, scm_delete]
+  job:
+    - match:
+        name: '.*'
+      allow: [read, run, scm_update, view_history]
+  project:
+    - equals:
+        name: 'prod-project'
+      allow: [read, scm_import]
+by:
+  group: scm-importers

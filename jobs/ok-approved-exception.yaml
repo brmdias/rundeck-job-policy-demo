@@ -1,0 +1,20 @@
+- defaultTab: nodes
+  description: Compliant via approved, unexpired exception (50 threads) listed in policy/job-policy.yml
+  executionEnabled: true
+  group: demo/validation
+  id: 7c1d3a52-1c5e-4e0b-9f43-0a5f1f0b2a11
+  loglevel: INFO
+  name: ok-approved-exception
+  nodeFilterEditable: false
+  nodefilters:
+    dispatch:
+      keepgoing: true
+      threadcount: 50
+    filter: 'tags: all'
+  nodesSelectedByDefault: true
+  sequence:
+    commands:
+    - exec: echo patch-wave
+    keepgoing: false
+    strategy: node-first
+  uuid: 7c1d3a52-1c5e-4e0b-9f43-0a5f1f0b2a11

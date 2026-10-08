@@ -1,0 +1,37 @@
+# Job definition policy - enforced by scripts/validate_jobs.py in GitLab CI.
+# Changes to this file require approval from the platform team (see CODEOWNERS).
+
+# Maximum nodefilters.dispatch.threadcount for any job (and any job-reference step).
+# Rationale: every dispatch thread holds connections, buffers and log streams in the
+# shared JVM heap; 100 threads in one job can exhaust memory for ALL teams on the cluster.
+max_threadcount: 20
+
+# How to treat threadcount values such as ${option.threads}:
+#   reject          - never allow dynamic values
+#   bounded_option  - allow only a single ${option.NAME} whose option is enforced with an
+#                     explicit allowed-values list, all within 1..max_threadcount
+dynamic_threadcount: bounded_option
+
+# Where job definitions live in the repo (as written by the SCM export File Path Template)
+job_paths:
+  - jobs/
+extensions: [".yaml", ".yml", ".json", ".xml"]
+exclude:
+  - "jobs/_templates/*"
+
+# Approved exceptions. Every entry needs an owner, a reason and an expiry date.
+# Identify the job by uuid (preferred - survives renames) or by repo path.
+# Expired exceptions fail the pipeline so they are re-reviewed, not forgotten.
+exceptions:
+  - uuid: "7c1d3a52-1c5e-4e0b-9f43-0a5f1f0b2a11"
+    path: ""
+    max_threadcount: 50
+    reason: "Quarterly patch wave across 2000 nodes; capacity test passed on 2026-09-15"
+    approved_by: "platform-team"
+    expires: "2027-03-31"
+  - uuid: "b2f7d9c8-5a40-4f6e-8a1d-33e9c0a1d7e5"
+    path: ""
+    max_threadcount: 40
+    reason: "Temporary migration job"
+    approved_by: "platform-team"
+    expires: "2026-06-30"   # intentionally expired - used by the demo test suite

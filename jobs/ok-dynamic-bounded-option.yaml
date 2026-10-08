@@ -1,0 +1,29 @@
+- defaultTab: nodes
+  description: Compliant - dynamic threadcount backed by an ENFORCED option with allowed values <= cap
+  executionEnabled: true
+  group: demo/validation
+  id: 0f6a3e1c-3333-4a33-8a33-000000000003
+  loglevel: INFO
+  name: ok-dynamic-bounded-option
+  nodeFilterEditable: false
+  nodefilters:
+    dispatch:
+      keepgoing: true
+      threadcount: ${option.threads}
+    filter: 'tags: web'
+  nodesSelectedByDefault: true
+  options:
+  - name: threads
+    enforced: true
+    required: true
+    value: '5'
+    values:
+    - '5'
+    - '10'
+    - '20'
+  sequence:
+    commands:
+    - exec: uptime
+    keepgoing: false
+    strategy: node-first
+  uuid: 0f6a3e1c-3333-4a33-8a33-000000000003

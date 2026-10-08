@@ -1,0 +1,7 @@
+# GitHub CODEOWNERS - enable "Require review from Code Owners" in the branch ruleset.
+# Replace @your-org/platform-team with your team (orgs) or your own username (personal repo demo;
+# note an author cannot approve their own PR - see GITHUB-SETUP.md step 4).
+/policy/            @your-org/platform-team
+/scripts/           @your-org/platform-team
+/.github/           @your-org/platform-team
+/.gitlab-ci.yml     @your-org/platform-team

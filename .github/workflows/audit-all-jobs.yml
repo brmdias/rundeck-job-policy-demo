@@ -1,0 +1,31 @@
+# Weekly audit of EVERY job definition (legacy non-compliant jobs). Reporting only - never blocks.
+name: Job policy audit
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"        # Mondays 06:00 UTC
+  workflow_dispatch: {}         # run manually from the Actions tab (use this in the demo)
+
+permissions:
+  contents: read
+
+jobs:
+  audit-all-jobs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install --quiet pyyaml
+      - name: Scan all jobs
+        run: |
+          mkdir -p reports
+          python3 scripts/validate_jobs.py --all --format csv  --output reports/job-audit.csv  || true
+          python3 scripts/validate_jobs.py --all --format json --output reports/job-audit.json || true
+          { echo '### Job policy audit'; echo '```'; python3 scripts/validate_jobs.py --all || true; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: job-audit-report
+          path: reports/
+          retention-days: 90

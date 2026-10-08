@@ -1,0 +1,8 @@
+file,job,uuid,rule,message
+jobs/bad-broken-yaml.yaml,<file>,,parse-error,cannot parse file: while parsing a flow sequence
+jobs/bad-dynamic-unbounded-option.yaml,demo/validation/bad-dynamic-unbounded-option,0f6a3e1c-5555-4a55-8a55-000000000005,max-threadcount,job.nodefilters.dispatch.threadcount: option 'threads' must be 'enforced' with an explicit allowed-values list so the thread count is bounded (cap 20)
+jobs/bad-expired-exception.yaml,demo/validation/bad-expired-exception,b2f7d9c8-5a40-4f6e-8a1d-33e9c0a1d7e5,exception-expired,exception approved by platform-team expired on 2026-06-30 (reason: Temporary migration job); renew or fix the job
+jobs/bad-expired-exception.yaml,demo/validation/bad-expired-exception,b2f7d9c8-5a40-4f6e-8a1d-33e9c0a1d7e5,max-threadcount,job.nodefilters.dispatch.threadcount: threadcount 40 exceeds the maximum allowed (20)
+jobs/bad-jobref-override.yaml,demo/validation/bad-jobref-override,0f6a3e1c-6666-4a66-8a66-000000000006,max-threadcount,job.sequence.commands[0].jobref.nodefilters.dispatch.threadcount: threadcount 60 exceeds the maximum allowed (20)
+jobs/bad-threads-100.yaml,demo/validation/bad-threads-100,0f6a3e1c-4444-4a44-8a44-000000000004,max-threadcount,job.nodefilters.dispatch.threadcount: threadcount 100 exceeds the maximum allowed (20)
+jobs/bad-threads-xml.xml,demo/validation/bad-threads-xml,0f6a3e1c-7777-4a77-8a77-000000000007,max-threadcount,xml:threadcount: threadcount 75 exceeds the maximum allowed (20)

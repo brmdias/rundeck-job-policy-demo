@@ -1,0 +1,20 @@
+- defaultTab: nodes
+  description: VIOLATION - 100 threads (the pattern behind the weekend memory incident)
+  executionEnabled: true
+  group: demo/validation
+  id: 0f6a3e1c-4444-4a44-8a44-000000000004
+  loglevel: INFO
+  name: bad-threads-100
+  nodeFilterEditable: false
+  nodefilters:
+    dispatch:
+      keepgoing: true
+      threadcount: 100
+    filter: 'tags: all'
+  nodesSelectedByDefault: true
+  sequence:
+    commands:
+    - exec: uptime
+    keepgoing: false
+    strategy: node-first
+  uuid: 0f6a3e1c-4444-4a44-8a44-000000000004

@@ -1,0 +1,41 @@
+# GitHub Actions equivalent of the GitLab MR gate.
+# The job name below ("validate-jobs") is the status check you mark as REQUIRED in branch protection.
+#
+# IMPORTANT: do not add a `paths:` filter to this trigger. If the workflow is skipped for a PR,
+# the required check never reports and the PR is stuck "waiting for status". The validator
+# already ignores files outside policy.job_paths, so running on every PR is cheap and safe.
+name: Job policy gate
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate-jobs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # full history so the diff against the base branch works
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - run: pip install --quiet pyyaml
+
+      - name: Validate changed job definitions
+        run: |
+          set +e
+          # annotations (inline errors on the PR "Files changed" tab)
+          python3 scripts/validate_jobs.py --changed-since "origin/${{ github.base_ref }}" --format github
+          rc_gh=$?
+          # human-readable summary on the run page
+          python3 scripts/validate_jobs.py --changed-since "origin/${{ github.base_ref }}" --format text > report.txt
+          rc=$?
+          { echo '### Job policy check'; echo '```'; cat report.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          cat report.txt
+          exit $rc
