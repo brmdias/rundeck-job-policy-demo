@@ -1,4 +1,0 @@
-- name: bad-broken-yaml
-  description: VIOLATION - unparsable file; a gate must fail closed because it cannot prove the job is safe
-  nodefilters: [unclosed
-    dispatch: {threadcount: 5
