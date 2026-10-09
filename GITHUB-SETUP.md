@@ -1,28 +1,26 @@
-# GitHub Setup Guide - End-to-End Demo
+# GitHub Setup Guide - End-to-End Example
 
-Goal: reproduce the GitLab merge-request gate on GitHub, then connect a Rundeck project to it so
-the whole flow can be shown: **Rundeck Dev -> Git branch -> Pull Request (gate) -> main -> Rundeck Prod import**.
+Goal: configure a GitHub pull-request gate and connect Rundeck projects to it:
+**Rundeck development -> Git branch -> Pull Request (gate) -> main -> Rundeck production import**.
 
 Mapping to GitLab: Merge Request = Pull Request, "Pipelines must succeed" = required status check,
 code-owner approval = "Require review from Code Owners". The validator and policy are identical.
-
-Time needed: about 20 minutes for Parts 1-3 (Git only), 20 more for Part 4 (Rundeck).
 
 ---
 
 ## Part 1 - Create the repository
 
 1. Create a new repository on GitHub, e.g. `rundeck-job-policy-demo`.
-   - **Public is recommended for the demo**: branch protection and rulesets are free on public
-     repos, while private repos need a paid plan (verify for your plan). The sample jobs are
-     synthetic, so nothing sensitive is exposed.
+   - Choose repository visibility according to your organization's policy and confirm that the
+     required ruleset features are available for your GitHub plan. The included jobs are examples;
+     review repository contents before making a repository public.
    - Do not add a README/license (keep it empty).
-2. Copy the demo into a new folder and push it (exclude the intentionally bad sample jobs from
+2. Copy the example into a new folder and push it (exclude the non-compliant sample jobs from
    `main`; you will use them later in a Pull Request):
 
 ```bash
 mkdir ~/rundeck-job-policy-demo && cd ~/rundeck-job-policy-demo
-cp -R <kb-repo>/demo/gitlab-job-validation-demo/. .
+cp -R <path-to-demo>/. .
 mkdir -p ../bad-samples && mv jobs/bad-* ../bad-samples/    # keep them aside, outside the repo
 rm -rf .gitlab-ci.yml CODEOWNERS                            # GitLab-only files (optional)
 git init -b main
@@ -62,12 +60,11 @@ The gate only blocks merges once it is a **required status check**.
    - Bypass list: keep it **empty** (otherwise admins skip the gate).
 3. Click **Create**.
 
-**Single-account demo note:** GitHub does not let an author approve their own PR, so with
+**Single-account evaluation note:** GitHub does not let an author approve their own PR, so with
 "Require review from Code Owners" a solo user cannot merge. Options:
-- (A) Use an organization with a second account or team as code owner (best, shows governance).
-- (B) For a quick demo, set approvals to `0` and leave "Require review from Code Owners" off, and
-  explain that this is where the platform team's approval would be enforced. The status check
-  still blocks bad jobs.
+- (A) Use an organization with a second account or team as code owner.
+- (B) For an evaluation without a second reviewer, set approvals to `0` and leave "Require review
+  from Code Owners" off. The required status check still validates job definitions.
 
 > Do not add a `paths:` filter to the workflow trigger. If the workflow does not run for a PR the
 > required check never reports and the PR is stuck waiting. The validator already ignores files
@@ -106,21 +103,21 @@ both are rejected (unbounded `${option.threads}` and a `jobref` step overriding 
 
 ### 3.4 Governance
 
-On a PR that edits `policy/job-policy.yml` (e.g. raising `max_threadcount` to 200): the PR requires
-the code owner's review, so a user cannot weaken the rules to let their own job through. For the
-exception flow, show `ok-approved-exception.yaml` (valid exception) and the expired exception.
+On a PR that edits `policy/job-policy.yml` (e.g. raising `max_threadcount` to 200), the code-owner
+review requirement applies to policy changes. For the exception flow, compare
+`ok-approved-exception.yaml` (valid exception) and the expired exception.
 
 ### 3.5 Legacy jobs: the audit
 
-1. Simulate a legacy job: temporarily disable the ruleset (or use your admin bypass once), commit
-   `../bad-samples/bad-threads-xml.xml` to `main` under `jobs/`, then re-enable the ruleset.
+1. To evaluate the audit without weakening protections, use a separate test repository or an
+   existing non-compliant job already present on `main`.
 2. **Actions > Job policy audit > Run workflow**.
 3. Open the run: the summary lists non-compliant jobs, and the **job-audit-report** artifact has
-   the CSV/JSON for remediation tracking. This answers "the gate does not fix existing jobs".
+   the CSV/JSON for remediation tracking.
 
 ## Part 4 - Connect Rundeck (end-to-end)
 
-Use a sandbox cluster (for example PDT-RDTAM or the AWS EKS dev environment) with two projects:
+Use a non-production Rundeck environment with two projects:
 `demo-dev` (where users build jobs) and `demo-prod` (import-only).
 
 ### 4.1 Credentials
@@ -164,19 +161,17 @@ ssh-keygen -t ed25519 -f rundeck-demo-key -C ""
    - Match regex: `jobs/.*\.(yaml|yml)`; read-only key.
 2. In the Jobs page choose **Import** and select the merged job. Only compliant jobs ever reach Prod.
 3. (After sandbox validation) apply `acl/prod-scm-import-only.aclpolicy` (edit group and project
-   names), then show that a normal user cannot create/edit jobs in `demo-prod` through the UI/API,
-   while the `scm-importers` group can import. **This ACL is untested; validate before the customer
-   session.**
+   names), then verify that users cannot create or edit jobs in `demo-prod` through the UI/API,
+   while the `scm-importers` group can import. Validate this sample ACL in the target environment
+   before deployment.
 
-## Pre-demo checklist
+## Validation checklist
 
 - [ ] `./tests/run_tests.sh` passes locally (10 passed).
 - [ ] Ruleset `protect-main` is Active with `validate-jobs` required and an empty bypass list.
-- [ ] A green PR and a red PR already exist as fallback screenshots.
 - [ ] `dev-export` branch exists; deploy keys work (`ssh -T git@github.com`).
-- [ ] Prod ACL tested in the sandbox (or skip that segment and call it out as a next step).
-- [ ] State clearly: this is an **interim control**; a product-level thread cap is being
-      requested (CSM escalation).
+- [ ] Production ACL tested in a non-production environment.
+- [ ] Explain the policy's scope and any complementary platform-level controls.
 
 ## Troubleshooting
 
