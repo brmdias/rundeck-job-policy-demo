@@ -6,8 +6,6 @@ A merge-request gate that blocks dangerous Rundeck / Runbook Automation job defi
 **Status:** interim control. The permanent fix is a product-level, system-wide cap on per-job
 node threads (enhancement request to be raised via the CSM / RUN project).
 
-Related best practice: [`best-practices/git-job-definition-validation-guardrails.md`](../../best-practices/git-job-definition-validation-guardrails.md)
-
 ## Why
 
 One job with 100 node-dispatch threads can exhaust the shared JVM heap and take down every team
